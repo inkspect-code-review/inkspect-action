@@ -1,0 +1,17 @@
+name: Inkspect
+description: Request an Inkspect code review for a public pull request without keys or token permissions.
+author: Inkspect
+branding:
+  icon: eye
+  color: black
+inputs:
+  ci-workflow:
+    description: Name of the existing CI workflow that must pass before review.
+    required: false
+    default: CI
+outputs:
+  request-id:
+    description: Identifier of the received review request, not a completed review.
+runs:
+  using: node24
+  main: index.mjs
