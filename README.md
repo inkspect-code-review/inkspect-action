@@ -43,3 +43,8 @@ Run `npm test` on Node.js 22 or later. GitHub runs the action on Node.js 24.
 See [GitHub's action metadata reference](https://docs.github.com/en/actions/reference/workflows-and-actions/metadata-syntax).
 
 Every line deserves a second look.
+
+Workflow naming: use `name: Inkspect Code Review` for the workflow and review job,
+and `name: Request Inkspect Cloud Engine` for the action step. Keep the file at
+`.github/workflows/inkspect.yml`; `ci-workflow` still names the repository's
+separate CI workflow.

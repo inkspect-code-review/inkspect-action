@@ -1,4 +1,4 @@
-name: Inkspect
+name: Inkspect Code Review
 description: Request an Inkspect code review for a public pull request without keys or token permissions.
 author: Inkspect
 branding:
