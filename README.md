@@ -1,56 +1,32 @@
-# Inkspect
+# Inkspect for GitHub Actions
 
-**Deeply intelligent code review.**
-
-Request an [Inkspect](https://inkspect.si) review for a public GitHub pull request.
-No API key, GitHub App installation, OIDC permission or repository write permission
-is needed. The action sends public PR and workflow identifiers; it never reads or
-sends a GitHub token, model key or your checked-out source files.
+Request an Inkspect review for a public pull request after CI passes. The action
+runs without checkout, API keys or GitHub token permissions.
 
 ## Setup
 
-Save [examples/inkspect.yml](examples/inkspect.yml) as
-`.github/workflows/inkspect.yml` on your repository's default branch. Set
-`ci-workflow` to the name of your existing pull-request CI workflow (default: `CI`).
-Use `permissions: {}` and do not add checkout or token inputs. GitHub still
-applies its normal Actions policies, including approval for some fork workflows.
+1. Copy [the example workflow](examples/inkspect.yml) to
+   `.github/workflows/inkspect.yml` on the default branch. Keep its workflow,
+   job and step names and the `permissions: {}` setting.
+2. Set `ci-workflow` to the name of your existing pull-request CI workflow
+   (default `CI`). To pin the action, replace `@v1` with a published commit’s full SHA.
+3. Open or update a non-draft PR. The first request goes to Inkspect for
+   repository approval. Once enabled, eligible PRs receive feedback on GitHub
+   after their current commit passes CI, subject to the repository’s review limit.
 
-`permissions: {}` does not request additional access. It disables all configurable
-`GITHUB_TOKEN` permissions for this workflow instead of inheriting the repository
-or organization's defaults. The action does not need these permissions; keep this
-line so it receives no unnecessary token access. See
-[GitHub's permissions reference](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions).
+A green action check acknowledges receipt. Review findings appear separately on
+the PR. Removing the workflow stops new action requests. Contact Inkspect to
+disable an existing sponsored server-monitor approval.
 
-After the workflow is merged to the default branch, open or update a non-draft
-PR. Its request will be visible to the Inkspect team for approval. Once enabled,
-Inkspect verifies the current PR and successful CI, reviews the source changes,
-and posts feedback from its review account. Future requests from enabled
-repositories are handled automatically within their review limits.
+## Data and permissions
 
-The workflow's green check means **request received**, not review completed or
-changes approved. Review results appear separately on the PR. A request waiting
-for repository approval does not run a model. Removing the default-branch
-installation prevents new action requests; contact Inkspect to disable an
-existing sponsored server-monitor approval as well.
-
-For a fixed release, replace `@v1` with a published 40-character commit SHA.
-The code is plain JavaScript with no package dependencies or build step.
-
-## Data sent
-
-Repository name, PR number, head commit SHA, workflow run ID and attempt, and the
-selected CI workflow name. These identifiers are public hints, not proof of the
-caller's identity. Inkspect verifies them independently with GitHub and checks
-the default-branch installation and repository approval before starting work.
+The action sends the repository name, PR number, head SHA, workflow run ID and
+attempt, and selected CI workflow name. Inkspect verifies these public identifiers,
+the installed workflow and the approval with GitHub before reviewing source.
+GitHub’s normal fork approval rules still apply.
+[Workflow permissions](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions)
 
 ## Development
 
-Run `npm test` on Node.js 22 or later. GitHub runs the action on Node.js 24.
-See [GitHub's action metadata reference](https://docs.github.com/en/actions/reference/workflows-and-actions/metadata-syntax).
-
-Every line deserves a second look.
-
-Workflow naming: use `name: Inkspect Code Review` for the workflow and review job,
-and `name: Request Inkspect Cloud Engine` for the action step. Keep the file at
-`.github/workflows/inkspect.yml`; `ci-workflow` still names the repository's
-separate CI workflow.
+Run `npm test` with Node.js 22 or newer. The action runs on Node.js 24 and has
+no package dependencies or build step.
