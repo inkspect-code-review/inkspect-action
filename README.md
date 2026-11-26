@@ -1,7 +1,7 @@
 # Inkspect for GitHub Actions
 
-Request an Inkspect review for a public pull request after CI passes. The action
-runs without checkout, API keys or GitHub token permissions.
+Notify Inkspect when a public pull request opens or changes. Inkspect starts
+the review once the repository is approved and CI passes on that commit.
 
 ## Setup
 
@@ -18,15 +18,20 @@ A green action check acknowledges receipt. Review findings appear separately on
 the PR. Removing the workflow stops new action requests. Contact Inkspect to
 disable an existing sponsored server-monitor approval.
 
-## Data and permissions
+## How a request works
 
-The action sends the repository name, PR number, head SHA, workflow run ID and
-attempt, and selected CI workflow name. Inkspect verifies these public identifiers,
-the installed workflow and the approval with GitHub before reviewing source.
-GitHub’s normal fork approval rules still apply.
-[Workflow permissions](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions)
+[The action manifest](action.yml) declares one input, `ci-workflow`, and one output,
+`request-id`. GitHub runs [index.mjs](index.mjs) directly on Node.js 24.
 
-## Development
+1. `notification()` reads the GitHub event and builds a payload with the repository,
+   PR number, head SHA, workflow run ID, attempt and CI workflow name. Drafts are skipped.
+2. `sendNotification()` posts those identifiers to Inkspect. The action runs without
+   checkout, API keys or token permissions.
+3. On HTTP 202, `main()` writes the receipt ID to the step output. Inkspect verifies
+   the PR and workflow against GitHub before reviewing the code.
 
-Run `npm test` with Node.js 22 or newer. The action runs on Node.js 24 and has
-no package dependencies or build step.
+## Test locally
+
+Run `npm test` with Node.js 22 or newer. The [action tests](test/action.test.mjs)
+use sample events and a stub HTTP client to check payload validation, retry
+behavior and receipt handling.
