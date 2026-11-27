@@ -18,6 +18,18 @@ A green action check acknowledges receipt. Review findings appear separately on
 the PR. Removing the workflow stops new action requests. Contact Inkspect to
 disable an existing sponsored server-monitor approval.
 
+### Skip PRs from release branches (optional)
+
+In `.github/workflows/inkspect.yml`, replace the `if` line under `jobs.review`
+with the following condition:
+
+```yaml
+    if: ${{ !github.event.pull_request.draft && !startsWith(github.head_ref, 'release/') }}
+```
+
+The Inkspect job skips drafts and PRs whose source branch starts with
+`release/`, such as `release/1.2`.
+
 ## How a request works
 
 [The action manifest](action.yml) declares one input, `ci-workflow`, and one output,
